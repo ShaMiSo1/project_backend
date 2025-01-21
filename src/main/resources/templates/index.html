@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홈</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <h1>홈 화면</h1>
+</header>
+<main>
+    <p>로그인에 성공했습니다! 여기가 홈 화면입니다.</p>
+    <p>사용자 이름: <span th:text="${username}"></span></p>
+    <p>사용자 권한: <span th:text="${authorities}"></span></p>
+    <a href="/logout">로그아웃</a>
+</main>
+<script src="/js/scripts.js"></script>
+</body>
+</html>
+
+
