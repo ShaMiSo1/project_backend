@@ -35,8 +35,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/users/verify","/css/**", "/js/**").permitAll()
+                        .requestMatchers("/h2-consle/**","/api/users/register", "/api/users/login", "/api/users/verify","/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
+                )
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin()) // 동일 출처에서의 프레임 로드 허용
                 )
                 .formLogin(form -> form
                         .loginPage("/api/users/login") // 로그인 페이지
