@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 성공</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <h1>회원가입 성공</h1>
+</header>
+<main>
+    <!-- 컨트롤러에서 model로 넘겨준 메시지 표시 -->
+    <p th:text="${message}">회원가입이 완료되었습니다. 이메일을 확인하세요.</p>
+
+    <p>이메일 인증을 완료한 뒤 로그인을 진행해주세요.</p>
+
+    <!-- 로그인 화면으로 가는 버튼 -->
+    <button onclick="location.href='/api/users/login'">
+        로그인 화면으로 돌아가기
+    </button>
+</main>
+</body>
+</html>

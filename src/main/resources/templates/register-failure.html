@@ -1,0 +1,21 @@
+<!-- register-failure.html -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 실패</title>
+</head>
+<body>
+<h1>회원가입 실패</h1>
+<!-- controller에서 model.addAttribute("message", result) 넘겨주므로 -->
+<p th:text="${message}">이미 존재하는 사용자 이름이거나 이메일입니다.</p>
+
+<button onclick="location.href='/api/users/register'">
+    다시 회원가입
+</button>
+<button onclick="location.href='/api/users/login'">
+    로그인 화면으로 이동
+</button>
+
+</body>
+</html>
