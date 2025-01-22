@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
@@ -39,11 +40,20 @@ public class UserController {
 
     // 회원가입 처리
     @PostMapping("/register")
-    @ResponseBody
-    public String registerUser(@ModelAttribute UserDto userDto) {
-        System.out.println("회원가입 요청: " + userDto);
-        return userService.registerUser(userDto);
+    public String registerUser(@ModelAttribute UserDto userDto, Model model) {
+        String result = userService.registerUser(userDto);
+        model.addAttribute("message", result);
+
+        if (result.equals("회원가입이 완료되었습니다. 이메일을 확인하세요.")) {
+            // === 회원가입 성공 ===
+            // register-success.html 뷰를 렌더링 (템플릿 엔진에서 찾을 수 있게 됨)
+            return "register-success";
+        } else {
+            // === 회원가입 실패 ===
+            return "register-failure";
+        }
     }
+
 
     // 이메일 인증 처리
     @GetMapping("/verify")
