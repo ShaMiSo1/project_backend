@@ -6,8 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BangyoApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BangyoApplication.class, args);
+	public static void main(String[] args) {SpringApplication.run(BangyoApplication.class, args);
 	}
 
 }
+
+// 김동현 와따감
