@@ -36,12 +36,15 @@ public class UserService {
 
         // HTML 버튼을 포함한 이메일 발송
         emailService.sendEmail(userDto.getEmail(), "Email Verification",
-                "<h1>이메일 인증</h1>" +
-                        "<p>아래 버튼을 클릭하여 이메일 인증을 완료하세요:</p>" +
+                "<h1 style='font-family: Arial, sans-serif; color: #333;'>이메일 인증</h1>" +
+                        "<p style='font-family: Arial, sans-serif; color: #555;'>아래 버튼을 클릭하여 이메일 인증을 완료하세요:</p>" +
                         "<a href='http://localhost:8080/api/users/verify?token=" + token + "' " +
-                        "style='padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;'>이메일 인증</a>" +
-                        "<p>만약 버튼이 보이지 않는다면 아래 링크를 복사해서 브라우저에 붙여넣으세요:</p>" +
-                        "<p>http://localhost:8080/api/users/verify?token=" + token + "</p>");
+                        "style='display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; " +
+                        "text-decoration: none; border-radius: 5px; font-family: Arial, sans-serif; font-size: 16px;'>이메일 인증</a>" +
+                        "<hr style='border: none; border-top: 1px solid #ccc; margin: 20px 0;'>" +
+                        "<p style='font-family: Arial, sans-serif; color: #555;'>만약 버튼이 보이지 않는다면, 아래 링크를 복사해서 브라우저에 붙여넣으세요:</p>" +
+                        "<p style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 10px; border: 1px solid #ddd; " +
+                        "border-radius: 5px; word-break: break-word;'>http://localhost:8080/api/users/verify?token=" + token + "</p>");
 
         User user = User.builder()
                 .username(userDto.getUsername())
