@@ -43,3 +43,6 @@ logging:
   level:
     org.springframework.security: DEBUG
     org.springframework.web: DEBUG
+
+jwt:
+  secretKey: "${JWT_SECRET_KEY}"
