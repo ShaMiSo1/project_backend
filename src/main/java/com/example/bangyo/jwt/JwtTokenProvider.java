@@ -1,8 +1,9 @@
 package com.example.bangyo.jwt;
 
+import com.example.bangyo.jwt.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -10,11 +11,10 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    // yml, properties 등의 환경변수에서 가져온다고 가정 (임의 값 예시)
-    @Value("${jwt.secretKey:default_secret_key_please_change}")
-    private String secretKey;
+    private final JwtProperties jwtProperties; // ✅ JwtProperties에서 Secret Key 가져옴
 
     // 토큰 유효 기간(밀리초) 예: 1시간
     private final long validityInMilliseconds = 60 * 60 * 1000L;
@@ -23,24 +23,23 @@ public class JwtTokenProvider {
      * 토큰 생성
      */
     public String generateToken(Authentication authentication) {
-        // UserDetailsService에서 설정한 UserDetails의 username(email)
         String email = authentication.getName();
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
-        // 시크릿키 객체 생성
-        Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        // ✅ JwtProperties에서 가져온 Secret Key를 사용
+        Key key = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes());
 
         return Jwts.builder()
-                .setSubject(email)               // 토큰 제목(보통 username이나 userId)
-                .setIssuedAt(now)                // 토큰 발급 시간
-                .setExpiration(validity)         // 만료 시간
-                .signWith(key, SignatureAlgorithm.HS256) // 서명
+                .setSubject(email)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     /**
-     * 토큰에서 인증 정보 추출 (여기서는 email)
+     * 토큰에서 인증 정보 추출
      */
     public String getEmail(String token) {
         Claims claims = parseClaims(token);
@@ -68,7 +67,7 @@ public class JwtTokenProvider {
 
     private Claims parseClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(secretKey.getBytes())
+                .setSigningKey(jwtProperties.getSecretKey().getBytes()) // ✅ Secret Key 적용
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

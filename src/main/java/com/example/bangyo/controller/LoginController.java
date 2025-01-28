@@ -5,8 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.example.bangyo.jwt.JwtTokenProvider;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController  // ✅ REST API 방식으로 변경
+@RequestMapping("/api/auth")  // ✅ 모든 API 경로를 "/api/auth" 하위로 설정
 @RequiredArgsConstructor
 public class LoginController {
 
@@ -27,14 +30,6 @@ public class LoginController {
             // 인증되지 않은 사용자 -> 로그인 페이지로 리다이렉트
             return "redirect:/login";
         }
-    }
-
-    /**
-     * 로그인 페이지 요청 처리
-     */
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login"; // login.html 반환
     }
 
     /**

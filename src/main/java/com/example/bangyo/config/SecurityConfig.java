@@ -48,15 +48,12 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer를
                 // 요청별 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
-                                "/login",
-                                "/register",
-                                "/api/auth/**",
-                                "/api/users/register",
-                                "/api/users/verify",  // 이메일 인증 경로 추가
-                                "/static/**"
-                        ).permitAll() // 위 경로는 모두 허용
-                        .anyRequest().authenticated() // 나머지는 인증 필요
+                                "/api/auth/login",
+                                "/api/auth/register", // 🔹 인증 없이 허용
+                                "/api/users/verify"
+                        ).permitAll()
+                        .requestMatchers("/api/auth/me").authenticated() // ✅ JWT가 필요한 API
+                        .anyRequest().authenticated()
                 )
                 // OAuth2 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
@@ -94,10 +91,11 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer를
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true); // 인증 정보를 포함한 요청 허용
-        config.addAllowedOriginPattern("*"); // 모든 도메인 허용 (필요시 특정 도메인만 허용)
-        config.addAllowedHeader("*"); // 모든 헤더 허용
-        config.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("http://localhost:5173"); // React 개발 서버 허용
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.addExposedHeader("Authorization");  // 클라이언트에서 Authorization 헤더 읽을 수 있도록 설정
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

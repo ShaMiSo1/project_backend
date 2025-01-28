@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@RestController
-@RequestMapping("/api/users")
+@RestController  // ✅ REST API 방식으로 변경
+@RequestMapping("/api/users")  // ✅ API 엔드포인트 설정
 @RequiredArgsConstructor
 public class UserController {
 
