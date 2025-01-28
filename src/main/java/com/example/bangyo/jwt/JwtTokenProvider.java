@@ -1,8 +1,8 @@
 package com.example.bangyo.jwt;
 
-import com.example.bangyo.jwt.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -14,62 +14,68 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private final JwtProperties jwtProperties; // ✅ JwtProperties에서 Secret Key 가져옴
+    private final JwtProperties jwtProperties;
 
-    // 토큰 유효 기간(밀리초) 예: 1시간
-    private final long validityInMilliseconds = 60 * 60 * 1000L;
+    // 예: 1시간
+    private final long validityInMilliseconds = 3600000L;
 
-    /**
-     * 토큰 생성
-     */
+    @PostConstruct
+    public void debugSecretKeyLength() {
+        String raw = jwtProperties.getSecretKey(); // .env에서 로드된 문자열
+        System.out.println(">>> [DEBUG] RAW secretKey = [" + raw + "]");
+        System.out.println(">>> [DEBUG] raw.length() = " + raw.length());
+
+        byte[] bytes = raw.getBytes();
+        System.out.println(">>> [DEBUG] raw.getBytes().length = " + bytes.length + " (in bits: " + (bytes.length*8) + ")");
+    }
+
     public String generateToken(Authentication authentication) {
+        String base64Key = jwtProperties.getSecretKey();
+        // "4OTz8XFkWv4i3N9K..."
+
+        // ① Base64 decode
+        byte[] decoded = io.jsonwebtoken.io.Decoders.BASE64.decode(base64Key);
+
+        // ② decode된 raw 바이트를 hmacShaKeyFor에 전달
+        Key key = Keys.hmacShaKeyFor(decoded);
+
+        // ③ 토큰 생성
         String email = authentication.getName();
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
-
-        // ✅ JwtProperties에서 가져온 Secret Key를 사용
-        Key key = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes());
+        Date expiration = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(now)
-                .setExpiration(validity)
+                .setExpiration(expiration)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    /**
-     * 토큰에서 인증 정보 추출
-     */
+
     public String getEmail(String token) {
+        // 파싱해 subject = email 꺼내기
         Claims claims = parseClaims(token);
         return claims.getSubject();
     }
 
-    /**
-     * 토큰 유효성 검증
-     */
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
             return true;
-        } catch (SecurityException | MalformedJwtException e) {
-            System.out.println("Invalid JWT signature.");
-        } catch (ExpiredJwtException e) {
-            System.out.println("Expired JWT token");
-        } catch (UnsupportedJwtException e) {
-            System.out.println("Unsupported JWT token");
-        } catch (IllegalArgumentException e) {
-            System.out.println("JWT token compact of handler are invalid");
+        } catch (JwtException e) {
+            return false;
         }
-        return false;
     }
 
     private Claims parseClaims(String token) {
+        // Base64 decode 먼저
+        byte[] decoded = io.jsonwebtoken.io.Decoders.BASE64.decode(jwtProperties.getSecretKey());
         return Jwts.parserBuilder()
-                .setSigningKey(jwtProperties.getSecretKey().getBytes()) // ✅ Secret Key 적용
+                .setSigningKey(decoded)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
+
 }
