@@ -8,7 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UserDto {
-    private String username;
-    private String password;
-    private String email;
+    private String email;    // 필수
+    private String password; // 필수
+
+    private String nickname; // 선택
 }
