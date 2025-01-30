@@ -1,10 +1,13 @@
+// src/main/java/com/example/bangyo/dto/LoginRequest.java
 package com.example.bangyo.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class LoginRequest {
     private String email;
     private String password;

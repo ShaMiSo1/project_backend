@@ -1,6 +1,7 @@
+// src/main/java/com/example/bangyo/controller/RecommendedIngredientsController.java
 package com.example.bangyo.controller;
 
-import com.example.bangyo.dto.IngredientResponseDto;
+import com.example.bangyo.dto.IngredientDto;
 import com.example.bangyo.service.ChatGPTService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class RecommendedIngredientsController {
      * @return 추천 재료 목록
      */
     @GetMapping("/recommend")
-    public ResponseEntity<?> recommendIngredients() {
-        List<IngredientResponseDto> recommended = chatGPTService.getPopularIngredientsWithImages();
-        return ResponseEntity.ok(recommended); // [{ name: "김치", imageUrl: "..." }, ...]
+    public ResponseEntity<List<IngredientDto>> recommendIngredients() {
+        List<IngredientDto> recommended = chatGPTService.getPopularIngredientsWithImages();
+        return ResponseEntity.ok(recommended); // [{ ingredientName: "김치", imageUrl: "..." }, ...]
     }
 }

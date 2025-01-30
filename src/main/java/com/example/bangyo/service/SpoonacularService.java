@@ -1,16 +1,17 @@
+// src/main/java/com/example/bangyo/service/SpoonacularService.java
 package com.example.bangyo.service;
 
-import com.example.bangyo.dto.IngredientDetails;
-import com.example.bangyo.dto.IngredientSearchResponse;
-import com.example.bangyo.dto.IngredientSearchResult;
+import com.example.bangyo.dto.IngredientDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,9 +40,9 @@ public class SpoonacularService {
     /**
      * 재료 검색
      * @param query 검색어 (한국어 이름)
-     * @return 검색 결과 (재료 이름, 이미지, id)
+     * @return 검색 결과 (재료 정보 리스트)
      */
-    public Mono<IngredientSearchResponse> searchIngredients(String query) {
+    public Mono<List<IngredientDto>> searchIngredients(String query) {
         String englishQuery = KOREAN_TO_ENGLISH.getOrDefault(query, query); // 매핑된 영어 이름 사용
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -51,7 +52,7 @@ public class SpoonacularService {
                         .queryParam("apiKey", spoonApiKey)
                         .build())
                 .retrieve()
-                .bodyToMono(IngredientSearchResponse.class)
+                .bodyToMono(new ParameterizedTypeReference<List<IngredientDto>>() {})
                 .doOnError(error -> log.error("Error during searchIngredients API call: {}", error.getMessage()))
                 .onErrorResume(error -> {
                     // 에러 발생 시 빈 응답을 반환하거나 적절히 처리
@@ -64,21 +65,25 @@ public class SpoonacularService {
      * @param ingredientName 재료 이름 (한국어 또는 영어)
      * @return 재료 상세 정보
      */
-    public Mono<IngredientDetails> getIngredientDetails(String ingredientName) {
+    public Mono<IngredientDto> getIngredientDetails(String ingredientName) {
         return searchIngredients(ingredientName)
-                .flatMap(response -> {
-                    if (response.getResults() != null && !response.getResults().isEmpty()) {
-                        IngredientSearchResult result = response.getResults().get(0);
-                        String imageUrl = result.getImage() != null ?
-                                "https://spoonacular.com/cdn/ingredients_100x100/" + result.getImage() :
+                .flatMap(results -> {
+                    if (results != null && !results.isEmpty()) {
+                        IngredientDto result = results.get(0);
+                        String imageUrl = result.getImageUrl() != null ?
+                                "https://spoonacular.com/cdn/ingredients_100x100/" + result.getImageUrl() :
                                 "https://via.placeholder.com/30";
-                        return Mono.just(new IngredientDetails(result.getName(), imageUrl));
+                        return Mono.just(IngredientDto.builder()
+                                .id(result.getId())
+                                .ingredientName(result.getIngredientName())
+                                .imageUrl(imageUrl)
+                                .quantity(null) // 사용자 냉장고용 필드이므로 null로 설정
+                                .build());
                     } else {
                         log.warn("No results found for ingredient: {}", ingredientName);
                         return Mono.empty(); // 결과가 없을 경우 빈 Mono 반환
                     }
                 })
-                // switchIfEmpty 제거
                 .doOnError(error -> log.error("Error during getIngredientDetails: {}", error.getMessage()));
     }
 }

@@ -1,7 +1,7 @@
 // src/main/java/com/example/bangyo/service/UserIngredientService.java
 package com.example.bangyo.service;
 
-import com.example.bangyo.dto.IngredientDto; // IngredientDto 임포트
+import com.example.bangyo.dto.IngredientDto;
 import com.example.bangyo.entity.User;
 import com.example.bangyo.entity.UserIngredient;
 import com.example.bangyo.repository.UserIngredientRepository;
@@ -25,8 +25,8 @@ public class UserIngredientService {
         User user = findUserByEmail(userEmail);
         UserIngredient entity = UserIngredient.builder()
                 .user(user)
-                .ingredientName(dto.getIngredientName())
-                .quantity(dto.getQuantity())
+                .ingredientName(dto.getIngredientName()) // ingredientName 사용
+                .quantity(dto.getQuantity() != null ? dto.getQuantity() : 0) // null 체크 및 기본값 설정
                 .imageUrl(dto.getImageUrl()) // 이미지도 함께 저장
                 .build();
         userIngredientRepository.save(entity);

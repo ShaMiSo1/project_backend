@@ -1,8 +1,8 @@
 package com.example.bangyo.controller;
 
 import com.example.bangyo.dto.LoginRequest;
-import com.example.bangyo.dto.LoginResponse;
-import com.example.bangyo.dto.RegisterResult;
+import com.example.bangyo.dto.LoginResponseDto;
+import com.example.bangyo.dto.RegisterResponseDto;
 import com.example.bangyo.dto.UserDto;
 import com.example.bangyo.entity.User;
 import com.example.bangyo.jwt.JwtTokenProvider;
@@ -40,7 +40,7 @@ public class AuthController {
         String jwt = jwtTokenProvider.generateToken(authentication);
 
         // JWT 반환
-        return ResponseEntity.ok(new LoginResponse(jwt, "Bearer"));
+        return ResponseEntity.ok(new LoginResponseDto(jwt, "Bearer"));
     }
 
     /**
@@ -48,7 +48,7 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
-        RegisterResult result = userService.registerUser(userDto);
+        RegisterResponseDto result = userService.registerUser(userDto);
         if (result.isSuccess()) {
             return ResponseEntity.ok(Map.of("message", result.getMessage()));
         } else {

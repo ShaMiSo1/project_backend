@@ -1,7 +1,7 @@
+// src/main/java/com/example/bangyo/service/ChatGPTService.java
 package com.example.bangyo.service;
 
-import com.example.bangyo.dto.IngredientDetails;
-import com.example.bangyo.dto.IngredientResponseDto;
+import com.example.bangyo.dto.IngredientDto;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -34,21 +34,29 @@ public class ChatGPTService {
      * ChatGPT에게 "한국 가정에서 냉장고에 가장 많이 보관하는 재료 10가지를 알려줘" 요청
      * @return 추천 재료 목록 with images
      */
-    public List<IngredientResponseDto> getPopularIngredientsWithImages() {
+    public List<IngredientDto> getPopularIngredientsWithImages() {
         List<String> popularIngredients = getPopularIngredients();
-        List<IngredientResponseDto> responseList = new ArrayList<>();
+        List<IngredientDto> responseList = new ArrayList<>();
 
         for (String ingredientName : popularIngredients) {
             try {
                 // Spoonacular API를 통해 이미지 URL 가져오기
-                IngredientDetails details = spoonacularService.getIngredientDetails(ingredientName).block();
+                IngredientDto details = spoonacularService.getIngredientDetails(ingredientName).block();
                 String imageUrl = details != null ? details.getImageUrl() : "https://via.placeholder.com/30";
 
-                responseList.add(new IngredientResponseDto(ingredientName, imageUrl));
+                responseList.add(IngredientDto.builder()
+                        .ingredientName(ingredientName)
+                        .imageUrl(imageUrl)
+                        .quantity(null) // 사용자 냉장고용 필드이므로 null로 설정
+                        .build());
             } catch (Exception e) {
                 log.error("Error fetching details for ingredient {}: {}", ingredientName, e.getMessage());
                 // 실패한 재료에 대해서는 기본 이미지 URL 할당
-                responseList.add(new IngredientResponseDto(ingredientName, "https://via.placeholder.com/30"));
+                responseList.add(IngredientDto.builder()
+                        .ingredientName(ingredientName)
+                        .imageUrl("https://via.placeholder.com/30")
+                        .quantity(null)
+                        .build());
             }
         }
 

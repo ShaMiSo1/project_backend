@@ -1,11 +1,7 @@
-// src/main/java/com/example/bangyo/dto/IngredientDto.java
 package com.example.bangyo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import jakarta.validation.constraints.*;
 
 @Getter
 @Setter
@@ -13,7 +9,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class IngredientDto {
-    private String ingredientName; // 재료 이름 (예: "김치")
-    private int quantity;          // 재료 수량 (예: 2)
-    private String imageUrl;       // 재료 이미지 URL (예: "https://...")
+    private Long id;                 // 예) 1, 2, 3...
+
+    @NotBlank(message = "재료 이름은 필수입니다.")
+    private String ingredientName;   // 예) "계란"
+
+    private String imageUrl;         // 예) "/images/egg.png"
+
+    private Integer quantity;        // 재료 수량 (예: 2) - 사용자 냉장고용
 }
