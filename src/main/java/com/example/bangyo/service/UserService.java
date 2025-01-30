@@ -49,7 +49,7 @@ public class UserService {
         User user = User.builder()
                 .email(userDto.getEmail())
                 .password(passwordEncoder.encode(userDto.getPassword()))
-                .nickname(userDto.getNickname())
+                .username(userDto.getUsername() != null ? userDto.getUsername() : "기본 사용자") // username 설정
                 .enabled(false) // 인증 전
                 .verificationToken(token)
                 .build();

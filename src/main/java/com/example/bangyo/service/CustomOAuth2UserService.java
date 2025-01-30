@@ -44,7 +44,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .orElseGet(() -> userRepository.save(
                         User.builder()
                                 .email(email)
-                                .nickname(name != null ? name : "네이버사용자")
+                                .username(name != null ? name : "네이버사용자")
                                 .enabled(true) // 소셜 로그인은 바로 활성화 시키거나, 추가 절차 사용
                                 .build()
                 ));

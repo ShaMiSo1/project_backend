@@ -31,8 +31,9 @@ public class User {
     // 이메일 인증 토큰(선택)
     private String verificationToken;
 
-    // 닉네임(선택): username 필드 대체, 중복 가능
-    private String nickname;
+    // 사용자 이름: 기존 nickname을 username으로 변경
+    @Column(nullable = false)
+    private String username;
 
     // 이메일 인증 여부 설정
     public void setEnabled(boolean enabled) {
