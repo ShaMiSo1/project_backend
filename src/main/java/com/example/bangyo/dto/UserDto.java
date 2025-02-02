@@ -11,5 +11,5 @@ public class UserDto {
     private String email;    // 필수
     private String password; // 필수
 
-    private String nickname; // 선택
+    private String username; // 선택 (기존 nickname)
 }

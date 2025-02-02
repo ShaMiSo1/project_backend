@@ -45,4 +45,10 @@ logging:
     org.springframework.web: DEBUG
 
 jwt:
-  secretKey: ${JWT_ENV_KEY}
+  secretKey: ${JWT_SECRET_KEY}
+
+spoonacular:
+  apiKey: ${SPOONACULAR_API_KEY}
+
+openai:
+  apiKey: ${OPENAI_API_KEY}

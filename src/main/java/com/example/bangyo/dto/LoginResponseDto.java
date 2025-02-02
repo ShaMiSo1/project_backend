@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LoginResponse {
+public class LoginResponseDto {
     private String token;      // JWT
     private String tokenType;  // "Bearer"
 }

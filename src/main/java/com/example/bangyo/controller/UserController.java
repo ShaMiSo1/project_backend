@@ -1,6 +1,6 @@
 package com.example.bangyo.controller;
 
-import com.example.bangyo.dto.RegisterResult;
+import com.example.bangyo.dto.RegisterResponseDto;
 import com.example.bangyo.dto.UserDto;
 import com.example.bangyo.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class UserController {
     // (회원가입 API가 AuthController에도 있으므로, 여기선 필요 없다면 지워도 됩니다)
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
-        RegisterResult result = userService.registerUser(userDto);
+        RegisterResponseDto result = userService.registerUser(userDto);
         if (result.isSuccess()) {
             return ResponseEntity.ok(Map.of("message", result.getMessage()));
         } else {

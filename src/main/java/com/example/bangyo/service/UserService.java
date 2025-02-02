@@ -1,6 +1,6 @@
 package com.example.bangyo.service;
 
-import com.example.bangyo.dto.RegisterResult;
+import com.example.bangyo.dto.RegisterResponseDto;
 import com.example.bangyo.dto.UserDto;
 import com.example.bangyo.entity.User;
 import com.example.bangyo.repository.UserRepository;
@@ -24,10 +24,10 @@ public class UserService {
     private EmailService emailService;
 
     // 회원가입 로직
-    public RegisterResult registerUser(UserDto userDto) {
+    public RegisterResponseDto registerUser(UserDto userDto) {
         // 1) 중복 이메일 체크
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-            return new RegisterResult(false, "이미 존재하는 이메일입니다.");
+            return new RegisterResponseDto(false, "이미 존재하는 이메일입니다.");
         }
 
         // 2) 인증 토큰 생성
@@ -49,7 +49,7 @@ public class UserService {
         User user = User.builder()
                 .email(userDto.getEmail())
                 .password(passwordEncoder.encode(userDto.getPassword()))
-                .nickname(userDto.getNickname())
+                .username(userDto.getUsername() != null ? userDto.getUsername() : "기본 사용자") // username 설정
                 .enabled(false) // 인증 전
                 .verificationToken(token)
                 .build();
@@ -57,7 +57,7 @@ public class UserService {
         userRepository.save(user);
 
         // 5) 반환
-        return new RegisterResult(true, "회원가입이 완료되었습니다. 이메일을 확인하세요.");
+        return new RegisterResponseDto(true, "회원가입이 완료되었습니다. 이메일을 확인하세요.");
     }
 
     @Transactional
