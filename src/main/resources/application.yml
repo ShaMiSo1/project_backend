@@ -52,3 +52,8 @@ spoonacular:
 
 openai:
   apiKey: ${OPENAI_API_KEY}
+
+# swagger
+springdoc:
+  swagger-ui:
+    path: /doc
